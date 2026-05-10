@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    # localhost:5432 뒤에 방금 pgAdmin에서 만든 DB 이름을 적습니다.
+    url: jdbc:postgresql://localhost:5432/book_archive?characterEncoding=UTF-8
+    username: postgres
+    password: 5432
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # 엔티티 클래스(BookRecord)를 보고 테이블을 자동으로 만들어주는 옵션입니다.
+      # 개발 초기에는 'update'가 가장 편합니다.
+      ddl-auto: update
+    show-sql: true # 실행되는 SQL을 콘솔에 예쁘게 보여줍니다.
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
