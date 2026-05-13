@@ -10,10 +10,33 @@ export default function WritePage() {
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(5); //기본5점
 
-  const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`제목: ${title}\n내용: ${content}\n\n내일 서버로 보낼 예정입니다!`);
-    router.push("/"); // 저장 후 홈으로 이동
+
+    try {
+      // 1. 서버로 데이터 전송
+      const response = await fetch("http://localhost:8080/api/books", {
+        method: "POST",
+        headers: {
+          "Content-Type: application/json",
+        },
+        body: JSON.stringify({
+          title: title,
+          content: content,
+          rating: rating,
+        }),
+      });
+
+      if (response.ok) {
+        alert("기록이 성공적으로 저장되었습니다!");
+        router.push("/"); // 메인 페이지(그리드)로 이동
+      } else {
+        alert("서버 저장에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("에러 발생:", error);
+      alert("서버와 연결할 수 없습니다.");
+    }
   };
 
   return (

@@ -6,10 +6,11 @@ import Link from "next/link";
 interface Book {
   id: number;
   title: string;
-  content: string;
+  content: string; // 백엔드에서 추가된 필드
   rating: number;
-  coverImgUrl: string | null;
-  bgImgUrl: string | null;
+  // 아직 DB에 없는 필드들은 선택적(Optional)으로 처리해 에러를 방지합니다.
+  coverImgUrl?: string | null; 
+  bgImgUrl?: string | null;
 }
 
 export default function Home() {
@@ -17,8 +18,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/books")
-      .then((res) => res.json())
+    // 💡 12년 차의 팁: 개발 환경에서는 캐시 때문에 데이터가 안 보일 수 있으니 
+    // { cache: 'no-store' }를 추가하거나 주소 뒤에 타임스탬프를 붙이기도 합니다.
+    fetch("http://localhost:8080/api/books", { cache: 'no-store' })
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
       .then((data) => {
         setBooks(data);
         setLoading(false);
@@ -30,10 +36,7 @@ export default function Home() {
   }, []);
 
   return (
-    /* 전체적인 톤은 화이트&그레이로 유지 */
     <main className="min-h-screen bg-[#ffffff] font-sans text-[#1f1f1f]">
-      
-      {/* 네비게이션: 직각형 레이아웃에 맞춰 정갈하게 배치 */}
       <nav className="flex justify-between items-center py-12 px-10 max-w-6xl mx-auto">
         <h1 className="text-2xl font-outfit font-semibold tracking-tighter text-[#1a1a1a] uppercase">
           My Archive
@@ -52,46 +55,50 @@ export default function Home() {
             <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-800 animate-spin"></div>
           </div>
         ) : (
-          /* gap-2로 더 밀착시켜서 그리드 느낌을 강조했습니다 */
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            {books.map((book) => (
-              <div 
-                key={book.id} 
-                className="group relative w-full aspect-[3/4] overflow-hidden bg-[#f2f2f2] transition-all duration-500"
-              >
-                {/* 배경 이미지: rounded 속성 제거 */}
-                <img 
-                  src={book.bgImgUrl || "https://images.unsplash.com/photo-1497604401993-f2e922e5cb0a"} 
-                  className="absolute inset-0 w-full h-full object-cover brightness-[0.8] grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" 
-                  alt="bg"
-                />
-                
-                {/* 오버레이 필터 */}
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-500" />
-
-                {/* 중앙 도서 커버: 여기도 직각형으로 유지 */}
-                <div className="absolute inset-0 flex items-center justify-center p-14">
-                  <img 
-                    src={book.coverImgUrl || "https://images.unsplash.com/photo-1544947950-fa07a98d237f"} 
-                    className="w-auto h-full max-h-[75%] object-contain shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-transform duration-700 group-hover:scale-105" 
-                    alt="cover"
-                  />
+            {books.length === 0 ? (
+                <div className="col-span-full text-center py-20 text-gray-300 tracking-widest text-xs">
+                    NO RECORDS FOUND. PLEASE ADD A NEW BOOK.
                 </div>
-
-                {/* 하단 텍스트 정보: 블러 효과와 직각 레이아웃 */}
-                <div className="absolute inset-x-0 bottom-0 p-6 bg-white/80 backdrop-blur-md translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                  <h3 className="text-[#1a1a1a] font-outfit font-bold text-base tracking-tight uppercase truncate">
-                    {book.title}
-                  </h3>
-                  <div className="flex justify-between items-center mt-2 border-t border-black/5 pt-2">
-                    <div className="flex text-[10px] text-gray-800 tracking-[0.3em]">
-                      {"★".repeat(book.rating)}
+            ) : (
+                books.map((book) => (
+                    <div 
+                      key={book.id} 
+                      className="group relative w-full aspect-[3/4] overflow-hidden bg-[#f2f2f2] transition-all duration-500"
+                    >
+                      {/* 배경 이미지: DB에 없을 경우를 대비해 기존 fallback URL 유지 */}
+                      <img 
+                        src={book.bgImgUrl || "https://images.unsplash.com/photo-1497604401993-f2e922e5cb0a"} 
+                        className="absolute inset-0 w-full h-full object-cover brightness-[0.8] grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000" 
+                        alt="bg"
+                      />
+                      
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-500" />
+      
+                      <div className="absolute inset-0 flex items-center justify-center p-14">
+                        {/* 커버 이미지: DB에 없을 경우를 대비해 기존 fallback URL 유지 */}
+                        <img 
+                          src={book.coverImgUrl || "https://images.unsplash.com/photo-1544947950-fa07a98d237f"} 
+                          className="w-auto h-full max-h-[75%] object-contain shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-transform duration-700 group-hover:scale-105" 
+                          alt="cover"
+                        />
+                      </div>
+      
+                      <div className="absolute inset-x-0 bottom-0 p-6 bg-white/80 backdrop-blur-md translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                        <h3 className="text-[#1a1a1a] font-outfit font-bold text-base tracking-tight uppercase truncate">
+                          {book.title}
+                        </h3>
+                        {/* content도 필요한 경우 여기에 노출할 수 있습니다 */}
+                        <div className="flex justify-between items-center mt-2 border-t border-black/5 pt-2">
+                          <div className="flex text-[10px] text-gray-800 tracking-[0.3em]">
+                            {"★".repeat(book.rating)}
+                          </div>
+                          <span className="text-[9px] font-black tracking-widest text-gray-400">DETAIL</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-[9px] font-black tracking-widest text-gray-400">DETAIL</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+                  ))
+            )}
           </div>
         )}
       </section>
