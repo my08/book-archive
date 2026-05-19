@@ -24,4 +24,9 @@ class BookService (private val bookRepository: BookRepository) {
         )
         return bookRepository.save(book)
     }
+
+    @Transactional
+    fun deleteBook(id: Long) {
+        bookRepository.deleteById(id);
+    }
 }
