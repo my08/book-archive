@@ -24,3 +24,26 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* src/app/globals.css 맨 아래에 추가 */
+
+/* 1. 위아래로 크게 둥실둥실 유영하는 마법 */
+@keyframes harryPotterFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 2. 양옆으로 취한 듯이 흔들거리는 마법 */
+@keyframes harryPotterSway {
+  0% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  100% { transform: translateX(-3px); }
+}
+
+/* 3. 비행하듯 살짝살짝 회전하는 마법 */
+@keyframes harryPotterRotate {
+  0% { transform: rotate(-5deg); }
+  50% { transform: rotate(8deg); }
+  100% { transform: rotate(-5deg); }
+}

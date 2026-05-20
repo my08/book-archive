@@ -1,6 +1,7 @@
 package green.me.book_archive_api.domain.entity
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "books")
@@ -19,4 +20,7 @@ class Book (
     @Column(nullable = false)
     val rating: Int,
 
-){}
+    @Column
+    val createAt: LocalDateTime = LocalDateTime.now(),
+
+    ){}
