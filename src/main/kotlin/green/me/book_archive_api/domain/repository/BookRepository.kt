@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface BookRepository : JpaRepository<Book, Long> {
+    fun findBooksByUserId(userId: Long): List<Book>
 }

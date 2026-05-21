@@ -15,7 +15,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     try {
       // 1. 서버로 데이터 전송
-      const response = await fetch("http://localhost:8080/api/books", {
+      const response = await fetch("http://192.168.200.122:8080/api/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

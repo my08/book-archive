@@ -18,7 +18,7 @@ export default function BookArchivePage() {
   const [error, setError] = useState<string | null>(null);
   const [monthlyData, setMonthlyData] = useState<number[]>(Array(12).fill(0));
 
-  const API_URL = 'http://localhost:8080/api/books';
+  const API_URL = 'http://192.168.200.122:8080/api/books';
 
   const getMonthFromDate = (dateString: string): number => {
     if (!dateString) return 1;

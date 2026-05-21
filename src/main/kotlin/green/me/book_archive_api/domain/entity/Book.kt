@@ -9,7 +9,7 @@ class Book (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long ?=null,
+    val userId: Long ?=null,
 
     @Column(nullable = false)
     val title: String,
